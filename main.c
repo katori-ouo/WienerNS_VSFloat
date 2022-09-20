@@ -5,18 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <Windows.h>
-
 #include "ns_core.h"
-#define LEN128_PACKET (128)
-#define LEN256_PACKET (256)
 
-void InnoTalkNS16KSample(char *szFileIn, char *szFileOut, int nSample, int nMode)
+void InnoTalkNS16KSample(char *szFileIn, char *szFileOut, uint32_t nSample)
 {
 
 	NSinst_t *pNS_inst = NULL;
-	short shInL[LEN128_PACKET];
-	short shOutL[LEN128_PACKET] = { 0 };
-	int i = 0;
+	short shInL[FRAME_LEN];
+	short shOutL[FRAME_LEN] = { 0 };
 	FILE *fpIn = NULL;
 	FILE *fpOut = NULL;
 
@@ -35,10 +31,10 @@ void InnoTalkNS16KSample(char *szFileIn, char *szFileOut, int nSample, int nMode
 
 		while (1)
 		{
-			if (LEN128_PACKET == fread(shInL, sizeof(short), LEN128_PACKET, fpIn))
+			if (FRAME_LEN == fread(shInL, sizeof(short), FRAME_LEN, fpIn))
 			{
 				InnoTalkNs_ProcessCore(pNS_inst, shInL, shOutL);
-				fwrite(shOutL, sizeof(short), LEN128_PACKET, fpOut);
+				fwrite(shOutL, sizeof(short), FRAME_LEN, fpOut);
 			}
 			else
 			{
@@ -55,7 +51,7 @@ void InnoTalkNS16KSample(char *szFileIn, char *szFileOut, int nSample, int nMode
 int main()
 {
 	printf("processing...\n");
-	InnoTalkNS16KSample("TelinkTest.pcm", "TelinkTest_0920.pcm", 16000, 3);
+	InnoTalkNS16KSample("TelinkTest.pcm", "TelinkTest_0920.pcm", (uint32_t)16000);
 	printf("end!\n");
 
 	getchar();

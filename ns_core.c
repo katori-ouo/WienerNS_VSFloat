@@ -7,18 +7,20 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#define OPTPROGRM 1
 
 #include <math.h>
 #include <string.h>
-//#include <stdio.h>
 #include <stdlib.h>
-
 #include "ns_core.h"
-//#include "fft4g.h"
-#include "ceva_typedef.h"
-#include "ceva_fft_lib.h"
-const float delta[129] = { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.2778125f, 1.3356250f, 1.3934375f, 1.4512500f, 1.5090625f, 1.5668750f, 1.6246875f, 1.68250f, 1.7403125f, 1.7981250f, 1.8559375f, 1.91375f, 1.9715625f, 2.0293750f, 2.0871875f, 2.145f, 2.2028125f, 2.2606250f, 2.3184375f, 2.37625f, 2.4340625f, 2.4918750f, 2.5496875f, 2.60750f, 2.6653125f, 2.7231250f, 2.7809375f, 2.83875f, 2.8965625f, 2.9543750f, 3.0121875f, 3.070f, 3.1278125f, 3.1856250f, 3.2434375f, 3.30125f, 3.3590625f, 3.4168750f, 3.4746875f, 3.53250f, 3.5903125f, 3.6481250f, 3.7059375f, 3.76375f, 3.8215625f, 3.8793750f, 3.9371875f, 3.995f, 4.0528125f, 4.1106250f, 4.1684375f, 4.22625f, 4.2840625f, 4.3418750f, 4.3996875f, 4.45750f, 4.5153125f, 4.5731250f, 4.6309375f, 4.68875f, 4.7465625f, 4.8043750f, 4.8621875f, 4.920f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f };
+const float delta[129] = { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f,
+1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.2778125f, 1.3356250f, 1.3934375f, 1.4512500f,
+1.5090625f, 1.5668750f, 1.6246875f, 1.68250f, 1.7403125f, 1.7981250f, 1.8559375f, 1.91375f, 1.9715625f, 2.0293750f, 2.0871875f, 2.145f,
+2.2028125f, 2.2606250f, 2.3184375f, 2.37625f, 2.4340625f, 2.4918750f, 2.5496875f, 2.60750f, 2.6653125f, 2.7231250f, 2.7809375f, 2.83875f,
+2.8965625f, 2.9543750f, 3.0121875f, 3.070f, 3.1278125f, 3.1856250f, 3.2434375f, 3.30125f, 3.3590625f, 3.4168750f, 3.4746875f, 3.53250f,
+3.5903125f, 3.6481250f, 3.7059375f, 3.76375f, 3.8215625f, 3.8793750f, 3.9371875f, 3.995f, 4.0528125f, 4.1106250f, 4.1684375f, 4.22625f,
+4.2840625f, 4.3418750f, 4.3996875f, 4.45750f, 4.5153125f, 4.5731250f, 4.6309375f, 4.68875f, 4.7465625f, 4.8043750f, 4.8621875f, 4.920f,
+5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f,
+5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f };
 static const float WinTable[256] = {
 	(float)0.0000, (float)0.0123, (float)0.0245, (float)0.0368, (float)0.0491, (float)0.0613, (float)0.0736, (float)0.0858, (float)0.0980,
 	(float)0.1102, (float)0.1224, (float)0.1346, (float)0.1467, (float)0.1589, (float)0.1710, (float)0.1830, (float)0.1951, (float)0.2071,
@@ -134,21 +136,16 @@ int InnoTalkNs_InitCore(NSinst_t* inst, uint32_t fs) {
   inst->blockLen = 128;
   inst->anaLen = 256;
   inst->magnLen = inst->anaLen / 2 + 1; // Number of frequency bins
-#if 1-CEVAOPT
-  inst->ip[0] = 0; // Setting this triggers initialization.
-  memset(inst->dataBuf, 0, sizeof(float) * ANAL_BLOCKL_MAX);
-  InnoTalk_rdft(inst->anaLen, 1, inst->dataBuf, inst->ip, inst->wfft);
-#endif
   memset(inst->dataBuf, 0, sizeof(float) * ANAL_BLOCKL_MAX);
   memset(inst->syntBuf, 0, sizeof(float) * ANAL_BLOCKL_MAX);
 
   memset(inst->smooth, SMOOTH, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->pmagnPrev, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->magnPrev, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->noisePrev, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->probPrev, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->signalPrev, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
-  memset(inst->minMagn, 0.0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->pmagnPrev, 0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->magnPrev, 0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->noisePrev, 0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->probPrev, 0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->signalPrev, 0, sizeof(float) * HALF_ANAL_BLOCKL);
+  memset(inst->minMagn, 0, sizeof(float) * HALF_ANAL_BLOCKL);
 
 	inst->overdrive = (float)1.3;
 	inst->denoiseBound = (float)0.07;
@@ -169,9 +166,9 @@ int InnoTalkNs_InitCore(NSinst_t* inst, uint32_t fs) {
 int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
 
   int     i;
-  float   energy1, energy2, gain, factor,fenergy1,fenergy2;
+  float   energy1, energy2, gain, factor;
   float   fTmp, dTmp;
-  float   fin[BLOCKL_MAX], fout[BLOCKL_MAX];
+  float   fin[FRAME_LEN], fout[FRAME_LEN];
   float   winData[ANAL_BLOCKL_MAX];
   float   CFFT_Outns[2 * ANAL_BLOCKL_MAX];//FFT输出，需要将实部和虚部取出来进行增益操作
   float   CFFT_InvOutns[2 * ANAL_BLOCKL_MAX];		//CEVA只需要一半的空间
@@ -182,7 +179,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
   float   probSpeechFinal[HALF_ANAL_BLOCKL] = { 0 };
   float   real[ANAL_BLOCKL_MAX], imag[HALF_ANAL_BLOCKL];
 #if FSmooth
-  float   zeta;
+  float   zeta,fenergy1,fenergy2;
   int     winLen;
   MovingAverage* average;
 #endif
@@ -233,7 +230,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
   }
 #endif
   inst->blockInd++; // Update the block index only when we process a block.
-#if CEVAOPT
+
   float CFFT_Inns[2 * ANAL_BLOCKL_MAX];//FFT输入，实部是加窗之后的输入，虚部为0
 	float tmp[2 * ANAL_BLOCKL_MAX] = {0};
   for (i=0;i<inst->anaLen;i++)
@@ -242,32 +239,18 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
     CFFT_Inns[2 * i + 1] = 0;     		// 虚部为 0
   }
 	CEVA_DSP_LIB_FLOAT_FFT_CX_OOB(8, CFFT_Inns, CFFT_Outns, CEVA_DSP_LIB_FLOAT_cos_sin, (int16*)bitrev_32_1024, tmp, 1);
-#else
-	InnoTalk_rdft(inst->anaLen, 1, winData, inst->ip, inst->wfft);	//FFT
-#endif
   // 计算当前帧的功率谱和相位谱
-#if CEVAOPT
+
   imag[0] = 0;
   real[0] = CFFT_Outns[0];
   imag[inst->magnLen - 1] = 0;
   real[inst->magnLen - 1] = CFFT_Outns[inst->anaLen];
-#else
-  imag[0] = 0;
-  real[0] = winData[0];
-  imag[inst->magnLen - 1] = 0;
-  real[inst->magnLen - 1] = winData[1];
-#endif
   magn[0] = (float)(real[0] * real[0]);
   magn[inst->magnLen - 1] = (float)(real[inst->magnLen - 1] * real[inst->magnLen - 1]);
   for (i = 1; i < inst->magnLen - 1; i++)
   {
-#if CEVAOPT
     real[i] = CFFT_Outns[2 * i];
     imag[i] = -1*CFFT_Outns[2 * i + 1];
-#else
-    real[i] = winData[2 * i];
-    imag[i] = winData[2 * i + 1];
-#endif
     // magnitude spectrum
     fTmp = real[i] * real[i];
     fTmp += imag[i] * imag[i];
@@ -280,7 +263,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
     memcpy(inst->minMagn, magn, sizeof(float) * inst->magnLen);
     memcpy(pmagn, magn, sizeof(float) * inst->magnLen);
     memcpy(noise, magn, sizeof(float) * inst->magnLen);
-    memset(probSpeechFinal, 0.0, sizeof(float) * inst->magnLen);
+    memset(probSpeechFinal, 0, sizeof(float) * inst->magnLen);
   }
   else
   // 非首帧
@@ -416,7 +399,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
       imag[i] *= inst->smooth[i];
   }
 
-#if CEVAOPT //如果库改进可以进一步优化
+  //如果库改进可以进一步优化
 	CFFT_Outns[0] = real[0];
   CFFT_Outns[1] = 0;
   CFFT_Outns[inst->anaLen] = real[inst->magnLen - 1];
@@ -432,22 +415,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
     {
         real[i] = CFFT_InvOutns[ANAL_BLOCKL_MAX - i] / ANAL_BLOCKL_MAX;
     }
-#else
-  // 转时域
-  winData[0] = real[0];
-  winData[1] = real[inst->magnLen - 1];
-  for (i = 1; i < inst->magnLen - 1; i++) {
-	  winData[2 * i] = real[i];
-	  winData[2 * i + 1] = imag[i];
-  }
-  InnoTalk_rdft(inst->anaLen, -1, winData, inst->ip, inst->wfft);
 
-  for (i = 0; i < inst->anaLen; i++) {
-    real[i] = 2.0f * winData[i] / inst->anaLen; // fft scaling
-  }
-#endif
-
-  //增益因子仅在处理200帧之后计算
   factor = (float)1.0;
   //if (inst->blockInd > END_STARTUP_LONG) {
   if (inst->blockInd > 0) {
