@@ -25,7 +25,7 @@ typedef struct NSinst_t_ {
   uint32_t        fs;
   int             blockLen;			//块长度
   int             anaLen;//分析窗长度
-  int             magnLen;//129，每个幅值
+  int             magnLen;//每个幅值
   float           dataBuf[ANAL_BLOCKL_MAX];//数据缓存
   float           syntBuf[ANAL_BLOCKL_MAX];//同步缓存
 

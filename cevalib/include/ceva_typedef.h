@@ -46,7 +46,7 @@
 #if FFTSIZE_512 
 #define CEVA_FFT_LIB_MAX_FFT 512
 #else
-#define CEVA_FFT_LIB_MAX_FFT 256
+#define CEVA_FFT_LIB_MAX_FFT 128
 #endif
 #define real        re
 #define imag        im
