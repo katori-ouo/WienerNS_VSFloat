@@ -385,12 +385,12 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
   for (i = 0; i < inst->magnLen; i++)
   {
       // 8. 增强语音幅度谱
-      real[i] *= inst->smooth[i];
-      imag[i] *= inst->smooth[i];
+      // real[i] *= inst->smooth[i];
+      // imag[i] *= inst->smooth[i];
   }
 
   //如果库改进可以进一步优化
-	CFFT_Outns[0] = real[0];
+  CFFT_Outns[0] = real[0];
   CFFT_Outns[1] = 0;
   CFFT_Outns[inst->anaLen] = real[inst->magnLen - 1];
   CFFT_Outns[inst->anaLen + 1] = 0;
