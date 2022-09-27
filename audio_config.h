@@ -14,7 +14,7 @@ typedef unsigned __int64    uint64_;
 #define INNOTALK_SPL_WORD16_MAX       32767
 #define INNOTALK_SPL_WORD16_MIN       -32768
 
-#define FRAME128            0
+#define FRAME128            1
 
 #if FRAME128
 #define FRAME_LEN			128 // Ö¡³¤
