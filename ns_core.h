@@ -24,8 +24,10 @@ typedef struct NSinst_t_ {
 
   uint32_t        fs;
   int             blockLen;			//块长度
-  int             anaLen;//分析窗长度
-  int             magnLen;//每个幅值
+  int             anaLen;       //分析窗长度
+  int             magnLen;
+  int             stages;       //log2_anaLen
+  int32_t         blockInd;                //帧索引计数器
   float           dataBuf[ANAL_BLOCKL_MAX];//数据缓存
   float           syntBuf[ANAL_BLOCKL_MAX];//同步缓存
 
@@ -33,7 +35,6 @@ typedef struct NSinst_t_ {
   float           smooth[HALF_ANAL_BLOCKL];//滤波系数
   float           overdrive;//滤波快慢程度
   float           denoiseBound;//降噪界限值
-  int32_t         blockInd;                           //帧索引计数器
   float           noisePrev[HALF_ANAL_BLOCKL];        //前一帧的噪声功率谱
   float           magnPrev[HALF_ANAL_BLOCKL];         //前一帧的幅度谱
   float           pmagnPrev[HALF_ANAL_BLOCKL];         //前一帧的平滑功率谱

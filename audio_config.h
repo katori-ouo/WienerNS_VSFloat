@@ -14,8 +14,16 @@ typedef unsigned __int64    uint64_;
 #define INNOTALK_SPL_WORD16_MAX       32767
 #define INNOTALK_SPL_WORD16_MIN       -32768
 
+#define FRAME128            0
+
+#if FRAME128
+#define FRAME_LEN			128 // 帧长
+#define ANAL_BLOCKL_MAX		256 // 最大分析块长度
+#define HALF_ANAL_BLOCKL	129 // 块分析长度一半加一
+#else
 #define FRAME_LEN			64 // 帧长
 #define ANAL_BLOCKL_MAX		128 // 最大分析块长度
 #define HALF_ANAL_BLOCKL	65 // 块分析长度一半加一
+#endif
 
 #endif /* INNOTALK_AUDIO_CONFIG_H_ */

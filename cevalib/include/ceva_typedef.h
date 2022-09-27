@@ -41,10 +41,11 @@
 #define _CEVA_TYPEDEF_H
 
 #define WIN32
+#define FFTSIZE_256 1
 
 #define SZF_CMPX    2
-#if FFTSIZE_512 
-#define CEVA_FFT_LIB_MAX_FFT 512
+#if FFTSIZE_256
+#define CEVA_FFT_LIB_MAX_FFT 256
 #else
 #define CEVA_FFT_LIB_MAX_FFT 128
 #endif
