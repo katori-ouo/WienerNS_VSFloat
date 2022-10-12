@@ -12,6 +12,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ns_core.h"
+
+WDRCinst_t *WDRC_inst = NULL;
+
 const float delta[65] = {
   1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3,
   1.4088, 1.5176, 1.6264, 1.7352, 1.8440, 1.9528,2.0616, 2.1704, 2.2792, 2.3880, 2.4968,
@@ -98,7 +101,8 @@ void movingAverageFree(MovingAverage* obj) {
  * @return int 分配失败返回-1, 否则返回0
  */
 int InnoTalkNs_CreateN(NSinst_t** NS_inst) {
-	*NS_inst = (NSinst_t*)malloc(sizeof(NSinst_t));
+	InnoTalkWdrc_CreateN(&WDRC_inst);
+  *NS_inst = (NSinst_t*)malloc(sizeof(NSinst_t));
 	if (*NS_inst != NULL) {
 		return 0;
 	}
@@ -142,6 +146,9 @@ int InnoTalkNs_InitCore(NSinst_t* inst, uint32_t fs) {
 
 	inst->blockInd = -1; //帧计数
 
+  float audiogram_f[FeatureNum] = {0,250,500,1000,2000,4000,8000};
+  float audiogram_ht[FeatureNum] = {20,20,20,20,20,20,20};
+  InnoTalkWdrc_InitCore(WDRC_inst, fs, audiogram_f, audiogram_ht);
   return 0;
 }
 
@@ -168,6 +175,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
   float   snrLocPost[HALF_ANAL_BLOCKL] = { 0 }, snrLocPrior[HALF_ANAL_BLOCKL] = { 0 };
   float   probSpeechFinal[HALF_ANAL_BLOCKL] = { 0 };
   float   real[ANAL_BLOCKL_MAX], imag[HALF_ANAL_BLOCKL];
+  float   WDRCgain[ChannelNum];
 #if FSmooth
   float   zeta,fenergy1,fenergy2;
   int     winLen;
@@ -176,7 +184,7 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
 
   // convert to float
   for (i = 0; i < inst->blockLen; i++) {
-    fin[i] = (float)speechFrame[i];
+    fin[i] = ((float)speechFrame[i]);
   }
 	// 将块数据存入缓存中
   memcpy(inst->dataBuf, inst->dataBuf + inst->blockLen,
@@ -344,13 +352,14 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
     {
       theFilter[i] = inst->denoiseBound;
     }
-    inst->signalPrev[i] = magn[i] * theFilter[i] * theFilter[i];
+    // inst->signalPrev[i] = magn[i] * theFilter[i] * theFilter[i];
   }
 
   // 7. 抑制水声
   for (size_t i = 0; i < inst->magnLen; i++)
   {
     inst->smooth[i] = FILTER_SMOOTH * inst->smooth[i] + (1 - FILTER_SMOOTH) * theFilter[i];
+    inst->signalPrev[i] = magn[i] * inst->smooth[i] * inst->smooth[i];
   }
 #if FSmooth
    fenergy1 = 0.0;
@@ -382,11 +391,17 @@ int InnoTalkNs_ProcessCore(NSinst_t* inst, short* speechFrame, short* outFrame){
    }
    memcpy(inst->smooth, theFilter, HALF_ANAL_BLOCKL * sizeof(float));
 #endif
+  InnoTalkWdrc_ProcessCore(WDRC_inst, inst->signalPrev, WDRCgain);
   for (i = 0; i < inst->magnLen; i++)
   {
       // 8. 增强语音幅度谱
       real[i] *= inst->smooth[i];
       imag[i] *= inst->smooth[i];
+  }
+  for (i = 1; i < inst->magnLen; i++)
+  {
+    real[i] *= WDRCgain[i - 1];
+    imag[i] *= WDRCgain[i - 1];
   }
 
   //如果库改进可以进一步优化

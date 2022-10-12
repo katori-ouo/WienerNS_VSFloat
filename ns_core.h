@@ -4,6 +4,7 @@
 #include "audio_config.h"
 #include "ceva_typedef.h"
 #include "ceva_fft_lib.h"
+#include "wdrc.h"
 
 #define FSmooth				      0 //滤波器在频域的平滑操作
 #define SMOOTH              0 // 滤波初始化系数
